@@ -6,13 +6,30 @@ LiquidCrystal lcd (8, 9, 4, 5, 6, 7);
 void setup() {  // put your setup code here, to run once:
   // runs one time when starting
   Serial.begin(115200);
-
+  
   //initialize wire library I2C Communication
-  Wire.begin();
+  Wire.begin(); //temperature
 
   setupDisplay(); //werkt
 
   Serial.println("Hello world!");
+}
+
+void setupDisplay() {
+  //lcd display
+  lcd.begin(16, 2);
+  lcd.setCursor(0, 0);
+  lcd.write("Welcome to our");
+  //delay(2000);
+  lcd.setCursor(0, 1);
+  lcd.write("biometric statio");
+  delay(2000);
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.write("n! Enjoy!");
+  delay(2000);
+  lcd.clear();
+  lcd.print("TEMP(C): ");
 }
 
 void loop() {
@@ -24,20 +41,21 @@ void loop() {
   String output = "";
 
   // retrieve temp
-  double temperature = infoSensor();
+  double temperature = infoSensor(); //temperatuur eerst
+    // TODO: 2e accelerometer , 3e puls
 
   //print temp
 
   lcd.setCursor(9, 0); //start writing at 9
   lcd.print(temperature);
-  Serial.println(String("Temperature (C):") + temperature);
-
+  Serial.println(String("Temperature (C):") + temperature); // we need to make string larger for accelerometer and pulse
 
   //lcd.println(String("[") + level + String("|") + pubg + String("]"));
   //Serial.println(String("[") + level + String("|") + pubg + String("]"));
   delay(500); //update every 1/2 second
 }
 
+//temperatuurmeter !!!!
 double infoSensor(void) {
 
 
@@ -63,7 +81,7 @@ double infoSensor(void) {
     temp[0] = Wire.read();
     temp[1] = Wire.read();
 
-    //dumb the lower 4 bits of byte 2
+    //dumb the lower 4 bits of byte 2a
     temp[1] = temp[1] >> MAGIC_NUMBER;
     //combine to make 12 bit binary number
     tempS = ((temp[0] << MAGIC_NUMBER) | temp[1]);
@@ -74,22 +92,7 @@ double infoSensor(void) {
   return 0.0;
 } // in case of not triggering the 'if'
 
-void setupDisplay() {
-  //lcd display
-  lcd.begin(16, 2);
-  lcd.setCursor(0, 0);
-  lcd.write("Welcome to our");
-  //delay(2000);
-  lcd.setCursor(0, 1);
-  lcd.write("biometric statio");
-  delay(2000);
-  lcd.clear();
-  lcd.setCursor(0, 0);
-  lcd.write("n! Enjoy!");
-  delay(2000);
-  lcd.clear();
-  lcd.print("TEMP(C): ");
-}
+
 
 
 
