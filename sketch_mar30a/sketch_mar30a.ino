@@ -1,5 +1,6 @@
 #include <LiquidCrystal.h>
 #include <Wire.h> //easy to use A4 (SDA), A5 (SCL)
+#
 
 LiquidCrystal lcd (8, 9, 4, 5, 6, 7);
 
@@ -48,7 +49,7 @@ void loop() {
 
   lcd.setCursor(9, 0); //start writing at 9
   lcd.print(temperature);
-  Serial.println(String("Temperature (C):") + temperature); // we need to make string larger for accelerometer and pulse
+  Serial.println(String("Data of 3 different components: ") + String("[") + temperature + String("C |")); // we need to make string larger for accelerometer and pulse
 
   //lcd.println(String("[") + level + String("|") + pubg + String("]"));
   //Serial.println(String("[") + level + String("|") + pubg + String("]"));
