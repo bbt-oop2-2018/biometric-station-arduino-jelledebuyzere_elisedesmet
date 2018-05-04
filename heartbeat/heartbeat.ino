@@ -22,8 +22,10 @@ void loop() {
 
   Signal = analogRead(PulseSensorPurplePin);  // Read the PulseSensor's value. 
                                               // Assign this value to the "Signal" variable.
-  Serial.print("Heartbeat: ");
-  Serial.println((Signal/6)+4);                    // Send the Signal value to Serial Plotter.
+  
+  Serial.println((Signal/6)+4);
+  Serial.print("BPM: ");
+
 
 delay(500);
 
