@@ -5,27 +5,32 @@ LiquidCrystal lcd (8, 9, 4, 5, 6, 7);
 
 
 //  Variables
-int PulseSensorPurplePin = 0;        // Pulse Sensor PURPLE WIRE connected to ANALOG PIN 0
-int LED13 = 13;   //  The on-board Arduion LED
-int Signal;                // holds the incoming raw data. Signal value can range from 0-1024
+int PulseSensorPurplePin = 0;      
+int LED13 = 13;   
+int Signal;               
 
 
 
 // The SetUp Function:
 void setup() {
-   Serial.begin(115200);         // Set's up Serial Communication at certain speed. 
-   
+   Serial.begin(115200);  
+
+   setupDisplay();
 }
 
-// The Main Loop Function
+void setupDisplay(){
+  lcd.begin(16, 2);
+  lcd.setCursor(0, 0);
+  lcd.print("BPM:");
+  
+}
+
 void loop() {
 
-  Signal = analogRead(PulseSensorPurplePin);  // Read the PulseSensor's value. 
-                                              // Assign this value to the "Signal" variable.
-  
-  Serial.println((Signal/6)+4);
-  Serial.print("BPM: ");
+  Signal = analogRead(PulseSensorPurplePin);  
 
+  lcd.setCursor(5, 0); 
+  lcd.print((Signal/6)-10);
 
 delay(500);
 

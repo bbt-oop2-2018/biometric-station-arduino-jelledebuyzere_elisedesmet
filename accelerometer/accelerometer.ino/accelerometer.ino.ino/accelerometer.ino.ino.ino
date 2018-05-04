@@ -31,18 +31,29 @@ local, and you've found our code helpful, please buy us a round!
 Distributed as-is; no warranty is given.
 ******************************************************************************/
 #include <Wire.h> // Must include Wire library for I2C
+#include <LiquidCrystal.h>
 #include <SparkFun_MMA8452Q.h> // Includes the SFE_MMA8452Q library
 
+LiquidCrystal lcd (8, 9, 4, 5, 6, 7);
 
 MMA8452Q accel;
 
 void setup()
 {
   Serial.begin(115200);
- 
-
   accel.init();
+  setupDisplay();
+  Wire.begin(); 
+}
 
+void setupDisplay(){
+  lcd.begin(16, 2);
+  lcd.setCursor(0, 0);
+  lcd.print("X:");
+  lcd.setCursor(8, 0);
+  lcd.print("Y:");
+  lcd.setCursor(0, 1);
+  lcd.print("Z:");
 }
 
 void loop()
@@ -54,25 +65,27 @@ void loop()
     accel.read();
 
     printCalculatedAccels();
-
     printOrientation();
-    
+    printAccels();
+   
     Serial.println(); // Print new line every time.
   }
 }
 
 void printAccels()
 {
-  Serial.print(accel.x, 3);
-  Serial.print("\t");
-  Serial.print(accel.y, 3);
-  Serial.print("\t");
-  Serial.print(accel.z, 3);
-  Serial.print("\t");
+  lcd.setCursor(2, 0); 
+  lcd.print(accel.cx, 3);
+  lcd.setCursor(10, 0); 
+  lcd.print(accel.cy, 3);
+  lcd.setCursor(2, 1); 
+  lcd.print(accel.cz, 3);
+  delay(500);
 }
 
 void printCalculatedAccels()
 { 
+
   Serial.print("x = ");
   Serial.print(accel.cx, 3);
   Serial.print("\t");
