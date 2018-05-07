@@ -25,8 +25,8 @@ void loop() {
   double accelerometerDataY = accelerometerY();
   double accelerometerDataZ = accelerometerZ();
 
-  Serial.println(temperatureData + String(";") + heartbeatData + String(";") +  accelerometerDataX + String(";") + accelerometerDataY + String(";") + accelerometerDataZ + String(";"));
-  delay(500);
+  Serial.println(temperatureData + String(";") + heartbeatData + String(";") +  accelerometerDataX + String(";") + accelerometerDataY + String(";") + accelerometerDataZ);
+  delay(1000);
 }
 
 double accelerometerX(void) {

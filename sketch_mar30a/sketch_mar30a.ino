@@ -1,19 +1,16 @@
 #include <LiquidCrystal.h>
 #include <Wire.h> //easy to use A4 (SDA), A5 (SCL)
-#
 
 LiquidCrystal lcd (8, 9, 4, 5, 6, 7);
 
 void setup() {  // put your setup code here, to run once:
   // runs one time when starting
   Serial.begin(115200);
-  
   //initialize wire library I2C Communication
   Wire.begin(); //temperature
-
   setupDisplay(); //werkt
 
-  Serial.println("Hello world!");
+  //Serial.println("Hello world!");
 }
 
 void setupDisplay() {
@@ -35,24 +32,19 @@ void setupDisplay() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  // logica van het systeem
-
-  int pubg = 1324;
-  double level = 12.3;
-  String output = "";
-
   // retrieve temp
   double temperature = infoSensor(); //temperatuur eerst
-    // TODO: 2e accelerometer , 3e puls
+    // TODO: 2e accelerometer double  , 3e puls
+    
 
   //print temp
 
   lcd.setCursor(9, 0); //start writing at 9
   lcd.print(temperature);
-  Serial.println(String("Data of 3 different components: ") + String("[") + temperature + String("C |")); // we need to make string larger for accelerometer and pulse
-
-  //lcd.println(String("[") + level + String("|") + pubg + String("]"));
-  //Serial.println(String("[") + level + String("|") + pubg + String("]"));
+  //Serial.println(String("[") + temperature + String("|")+ 125 + String("|") + 147 + String("]"));  // voor met method zonder split
+                                                          //heartbeat, acc_X, Y, Z
+  Serial.println(temperature + String(";")+ 125 + String(";") + 147 + String(";") + 250 + String(";")+ 15.14); //met split
+  
   delay(500); //update every 1/2 second
 }
 
@@ -92,6 +84,8 @@ double infoSensor(void) {
   }
   return 0.0;
 } // in case of not triggering the 'if'
+
+
 
 
 
