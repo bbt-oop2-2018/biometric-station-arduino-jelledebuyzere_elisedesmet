@@ -5,6 +5,17 @@
 
 LiquidCrystal lcd (8, 9, 4, 5, 6, 7);
 
+byte heart[8] = {
+  0b00000,
+  0b01010,
+  0b10101,
+  0b10001,
+  0b01010,
+  0b00100,
+  0b00000,
+  0b00000 
+};
+
 //heartbeatVar
 int PulseSensorPurplePin = 0;       
 int Signal; 
@@ -12,10 +23,52 @@ int Signal;
 //accelerometerVar
 MMA8452Q accel;
 
+
 void setup() {
   Serial.begin(115200);
   Wire.begin(); 
   accel.init();
+  setupDisplay();
+}
+
+void setupDisplay(){
+  lcd.begin(16,2);
+
+  lcd.setCursor(1, 0);
+  lcd.write("Welcome to our");
+  //delay(2000);
+  lcd.setCursor(0, 1);
+  lcd.write("BiometricStation");
+  delay(2500);
+  lcd.clear();
+  lcd.setCursor(5, 0);
+  lcd.write("Enjoy!");
+  delay(3000);
+  lcd.clear();  
+
+  
+  lcd.createChar(0, heart);
+  lcd.begin(16, 2);  
+  lcd.write(byte(0));
+
+  lcd.setCursor(1,0);
+  lcd.print(":"); 
+
+  lcd.setCursor(4,0);
+  lcd.print("BPM");
+  
+  lcd.setCursor(14,0);
+  lcd.print("\337C");
+
+  lcd.setCursor(0,1);
+  lcd.print("x");
+  lcd.setCursor(5,1);
+  lcd.print("y");
+  lcd.setCursor(10,1);
+  lcd.print("z");
+
+
+
 }
 
 void loop() {
@@ -25,7 +78,20 @@ void loop() {
   double accelerometerDataY = accelerometerY();
   double accelerometerDataZ = accelerometerZ();
 
-  Serial.println(temperatureData + String(";") + heartbeatData + String(";") +  accelerometerDataX + String(";") + accelerometerDataY + String(";") + accelerometerDataZ);
+  Serial.println(temperatureData + String(";") 
+                  + heartbeatData + String(";") 
+                  + accelerometerDataX + String(";") 
+                  + accelerometerDataY + String(";") 
+                  + accelerometerDataZ);
+
+  lcd.setCursor(9,0);
+  lcd.print(temperatureData);
+
+  lcd.setCursor(2,0);
+  lcd.print(heartbeatData);
+
+
+  
   delay(1000);
 }
 
