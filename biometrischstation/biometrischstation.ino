@@ -25,7 +25,9 @@ MMA8452Q accel;
 
 
 void setup() {
+  
   Serial.begin(115200);
+  //Serial.println("Hello world!"); test
   Wire.begin(); 
   accel.init();
   setupDisplay();
@@ -62,21 +64,18 @@ void setupDisplay(){
 
   lcd.setCursor(0,1);
   lcd.print("x");
-  lcd.setCursor(5,1);
+  lcd.setCursor(6,1);
   lcd.print("y");
-  lcd.setCursor(10,1);
+  lcd.setCursor(11,1);
   lcd.print("z");
-
-
-
 }
 
 void loop() {
   double temperatureData = temperature();
   int heartbeatData = heartbeat();
-  double accelerometerDataX = accelerometerX();
-  double accelerometerDataY = accelerometerY();
-  double accelerometerDataZ = accelerometerZ();
+  float accelerometerDataX = accelerometerX();
+  float accelerometerDataY = accelerometerY();
+  float accelerometerDataZ = accelerometerZ();
 
   Serial.println(temperatureData + String(";") 
                   + heartbeatData + String(";") 
@@ -90,7 +89,14 @@ void loop() {
   lcd.setCursor(2,0);
   lcd.print(heartbeatData);
 
-
+  lcd.setCursor(1,1); 
+  lcd.print(accelerometerDataX);
+  
+  lcd.setCursor(7,1);
+  lcd.print(accelerometerDataY);
+  
+  lcd.setCursor(12,1);
+  lcd.print(accelerometerDataZ);
   
   delay(1000);
 }
