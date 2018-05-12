@@ -56,7 +56,7 @@ void setupDisplay(){
   lcd.setCursor(1,0);
   lcd.print(":"); 
 
-  lcd.setCursor(4,0);
+  lcd.setCursor(5,0);
   lcd.print("BPM");
   
   lcd.setCursor(14,0);
