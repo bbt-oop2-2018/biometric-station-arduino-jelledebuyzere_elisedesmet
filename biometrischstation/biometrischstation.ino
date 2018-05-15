@@ -2,6 +2,26 @@
 #include <LiquidCrystal.h>
 #include <Wire.h>
 
+//heartbeatVar
+int PulseSensorPurplePin = 0;       
+
+//accelerometerVar
+MMA8452Q accel;
+
+
+//  VARIABLES
+int pulsePin = 0;                 // Pulse Sensor purple wire connected to analog pin 0
+int blinkPin = 13;                // pin to blink led at each beat
+int fadePin = 5;                  // pin to do fancy classy fading blink at each beat
+int fadeRate = 0;                 // used to fade LED on with PWM on fadePin
+
+
+// these variables are volatile because they are used during the interrupt service routine!
+volatile int BPM;                   // used to hold the pulse rate
+volatile int Signal;                // holds the incoming raw data
+volatile int IBI = 600;             // holds the time between beats, the Inter-Beat Interval
+volatile boolean Pulse = false;     // true when pulse wave is high, false when it's low
+volatile boolean QS = false;        // becomes true when Arduoino finds a beat.
 
 LiquidCrystal lcd (8, 9, 4, 5, 6, 7);
 
@@ -16,20 +36,17 @@ byte heart[8] = {
   0b00000 
 };
 
-//heartbeatVar
-int PulseSensorPurplePin = 0;       
-int Signal; 
-
-//accelerometerVar
-MMA8452Q accel;
 
 
 void setup() {
+  pinMode(blinkPin,OUTPUT);         // pin that will blink to your heartbeat!
+  pinMode(fadePin,OUTPUT);  
   
   Serial.begin(115200);
   //Serial.println("Hello world!"); test
-  Wire.begin(); 
-  accel.init();
+  Wire.begin();  //temp
+  accel.init(); //acc
+  interruptSetup();   
   setupDisplay();
 }
 
@@ -76,6 +93,7 @@ void loop() {
   float accelerometerDataX = accelerometerX();
   float accelerometerDataY = accelerometerY();
   float accelerometerDataZ = accelerometerZ();
+  ledFadeToBeat();
 
   Serial.println(temperatureData + String(";") 
                   + heartbeatData + String(";") 
@@ -83,6 +101,12 @@ void loop() {
                   + accelerometerDataY + String(";") 
                   + accelerometerDataZ);
 
+dataLcdDisplay(temperatureData, heartbeatData, accelerometerDataX, accelerometerDataY, accelerometerDataZ);
+  
+  delay(1000);
+}
+
+void dataLcdDisplay(double temperatureData, int heartbeatData, float accelerometerDataX, float accelerometerDataY, float accelerometerDataZ){
   lcd.setCursor(9,0);
   lcd.print(temperatureData);
 
@@ -98,9 +122,9 @@ void loop() {
   lcd.setCursor(12,1);
   lcd.print(accelerometerDataZ);
   
-  delay(1000);
 }
 
+/* Accelerometer Section */
 double accelerometerX(void) {
   accel.read();
   return accel.cx;
@@ -115,13 +139,28 @@ double accelerometerZ(void) {
   accel.read();
   return accel.cz;
 }
+/* ---- */
+
+/* Heartbeat Section */
+void ledFadeToBeat(){
+    fadeRate -= 15;                         //  set LED fade value
+    fadeRate = constrain(fadeRate,0,255);   //  keep LED fade value from going into negative numbers!
+    analogWrite(fadePin,fadeRate);          //  fade LED
+  }
 
 int heartbeat(void) {
-  Signal = analogRead(PulseSensorPurplePin);  
-  int heartbeat = ((Signal/6)-10);
+  int heartbeat;
+  if (QS == true){                       // Quantified Self flag is true when arduino finds a heartbeat
+        fadeRate = 255;                  // Set 'fadeRate' Variable to 255 to fade LED with pulse
+        heartbeat =BPM;                  // send heart rate with a 'B' prefix
+        QS = false;                      // reset the Quantified Self flag for next time    
+     }
   return heartbeat; 
 }
 
+/* ---- */
+
+/* Temperature Section */
  double temperature(void) {
     uint8_t temp[2]; // values of pins will come in this array
     //signed integer of exactly 16 bits
@@ -154,7 +193,7 @@ int heartbeat(void) {
     }
     return 0.0;
 } // in case of not triggering the 'if'
-
+/* ---- */
 
 
 
