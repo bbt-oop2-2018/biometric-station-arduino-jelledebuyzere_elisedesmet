@@ -2,19 +2,15 @@
 #include <LiquidCrystal.h>
 #include <Wire.h>
 
-//heartbeatVar
-int PulseSensorPurplePin = 0;       
-
-//accelerometerVar
+//Variable FOR ACCELEROMETER
 MMA8452Q accel;
 
 
-//  VARIABLES
+//  VARIABLES FOR HEARTBEAT
 int pulsePin = 0;                 // Pulse Sensor purple wire connected to analog pin 0
 int blinkPin = 13;                // pin to blink led at each beat
 int fadePin = 5;                  // pin to do fancy classy fading blink at each beat
 int fadeRate = 0;                 // used to fade LED on with PWM on fadePin
-
 
 // these variables are volatile because they are used during the interrupt service routine!
 volatile int BPM;                   // used to hold the pulse rate
@@ -36,14 +32,11 @@ byte heart[8] = {
   0b00000 
 };
 
-
-
 void setup() {
-  pinMode(blinkPin,OUTPUT);         // pin that will blink to your heartbeat!
+  pinMode(blinkPin,OUTPUT);    // pin that will blink to your heartbeat!
   pinMode(fadePin,OUTPUT);  
   
   Serial.begin(115200);
-  //Serial.println("Hello world!"); test
   Wire.begin();  //temp
   accel.init(); //acc
   interruptSetup();   
@@ -148,11 +141,11 @@ void ledFadeToBeat(){
     analogWrite(fadePin,fadeRate);          //  fade LED
   }
 
-int heartbeat(void) {
+int heartbeat(void) { //Needs some time to give correct values
   int heartbeat;
   if (QS == true){                       // Quantified Self flag is true when arduino finds a heartbeat
         fadeRate = 255;                  // Set 'fadeRate' Variable to 255 to fade LED with pulse
-        heartbeat =BPM;                  // send heart rate with a 'B' prefix
+        heartbeat =BPM;                  // send heart rate
         QS = false;                      // reset the Quantified Self flag for next time    
      }
   return heartbeat; 
