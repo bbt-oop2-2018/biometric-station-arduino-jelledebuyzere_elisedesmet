@@ -102,6 +102,9 @@ dataLcdDisplay(temperatureData, heartbeatData, accelerometerDataX, accelerometer
 void dataLcdDisplay(double temperatureData, int heartbeatData, float accelerometerDataX, float accelerometerDataY, float accelerometerDataZ){
   lcd.setCursor(9,0);
   lcd.print(temperatureData);
+  
+  lcd.setCursor(4,0);
+  lcd.print(" ");
 
   lcd.setCursor(2,0);
   lcd.print(heartbeatData);
