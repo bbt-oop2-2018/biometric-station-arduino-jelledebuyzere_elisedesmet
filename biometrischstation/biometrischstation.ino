@@ -5,19 +5,10 @@
 //Variable FOR ACCELEROMETER
 MMA8452Q accel;
 
+int PulseSensorPurplePin = 0;      
+int LED13 = 13;   
+int Signal;               
 
-//  VARIABLES FOR HEARTBEAT
-int pulsePin = 0;                 // Pulse Sensor purple wire connected to analog pin 0
-int blinkPin = 13;                // pin to blink led at each beat
-int fadePin = 5;                  // pin to do fancy classy fading blink at each beat
-int fadeRate = 0;                 // used to fade LED on with PWM on fadePin
-
-// these variables are volatile because they are used during the interrupt service routine!
-volatile int BPM;                   // used to hold the pulse rate
-volatile int Signal;                // holds the incoming raw data
-volatile int IBI = 600;             // holds the time between beats, the Inter-Beat Interval
-volatile boolean Pulse = false;     // true when pulse wave is high, false when it's low
-volatile boolean QS = false;        // becomes true when Arduoino finds a beat.
 
 LiquidCrystal lcd (8, 9, 4, 5, 6, 7);
 
@@ -33,13 +24,11 @@ byte heart[8] = {
 };
 
 void setup() {
-  pinMode(blinkPin,OUTPUT);    // pin that will blink to your heartbeat!
-  pinMode(fadePin,OUTPUT);  
-  
+
   Serial.begin(115200);
   Wire.begin();  //temp
   accel.init(); //acc
-  interruptSetup();   
+  //interruptSetup();   
   setupDisplay();
 }
 
@@ -72,12 +61,6 @@ void setupDisplay(){
   lcd.setCursor(14,0);
   lcd.print("\337C");
 
-  lcd.setCursor(0,1);
-  lcd.print("x");
-  lcd.setCursor(6,1);
-  lcd.print("y");
-  lcd.setCursor(11,1);
-  lcd.print("z");
 }
 
 void loop() {
@@ -86,7 +69,6 @@ void loop() {
   float accelerometerDataX = accelerometerX();
   float accelerometerDataY = accelerometerY();
   float accelerometerDataZ = accelerometerZ();
-  ledFadeToBeat();
 
   Serial.println(temperatureData + String(";") 
                   + heartbeatData + String(";") 
@@ -109,13 +91,13 @@ void dataLcdDisplay(double temperatureData, int heartbeatData, float acceleromet
   lcd.setCursor(2,0);
   lcd.print(heartbeatData);
 
-  lcd.setCursor(1,1); 
+  lcd.setCursor(0,1); 
   lcd.print(accelerometerDataX);
   
-  lcd.setCursor(7,1);
+  lcd.setCursor(6,1);
   lcd.print(accelerometerDataY);
   
-  lcd.setCursor(12,1);
+  lcd.setCursor(11,1);
   lcd.print(accelerometerDataZ);
   
 }
@@ -138,20 +120,11 @@ double accelerometerZ(void) {
 /* ---- */
 
 /* Heartbeat Section */
-void ledFadeToBeat(){
-    fadeRate -= 15;                         //  set LED fade value
-    fadeRate = constrain(fadeRate,0,255);   //  keep LED fade value from going into negative numbers!
-    analogWrite(fadePin,fadeRate);          //  fade LED
-  }
 
 int heartbeat(void) { //Needs some time to give correct values
-  int heartbeat;
-  if (QS == true){                       // Quantified Self flag is true when arduino finds a heartbeat
-        fadeRate = 255;                  // Set 'fadeRate' Variable to 255 to fade LED with pulse
-        heartbeat =BPM;                  // send heart rate
-        QS = false;                      // reset the Quantified Self flag for next time    
-     }
-  return heartbeat; 
+  Signal = analogRead(PulseSensorPurplePin);  
+
+  return (Signal/6)-10; 
 }
 
 /* ---- */
